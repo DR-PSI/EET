@@ -455,15 +455,19 @@ function revGeocode(lat,lng){
 }
 
 var lastRoute=0;
+var routeFetching=false;
 function updateRoute(){
-  var now=Date.now();if(now-lastRoute<3000)return;lastRoute=now;
-  if(routeLine){try{map.removeLayer(routeLine);}catch(e){}routeLine=null;}
-  if(routeGlow){try{map.removeLayer(routeGlow);}catch(e){}routeGlow=null;}
+  var now=Date.now();
+  if(now-lastRoute<15000)return;  // throttle 15 วิ
+  if(routeFetching)return;        // ไม่ fetch ซ้อน
+  lastRoute=now;
+  routeFetching=true;
+  // ไม่ลบเส้นเก่า — ลบเฉพาะตอนที่เส้นใหม่พร้อมแล้ว
   tryServer(['valhalla','https://router.project-osrm.org','https://routing.openstreetmap.de/routed-car'],0);
 }
 
 function tryServer(servers,idx){
-  if(idx>=servers.length){fallbackRoute();return;}
+  if(idx>=servers.length){routeFetching=false;fallbackRoute();return;}
   var url,opts;
   if(idx===0){
     url='https://valhalla1.openstreetmap.de/route';
@@ -486,11 +490,13 @@ function tryServer(servers,idx){
         var dur=data.routes[0].duration,dist=data.routes[0].distance;
         if(curMode==='moving'){document.getElementById('etanum').textContent=Math.max(1,Math.round(dur/60))+' นาที';document.getElementById('etadist').textContent=dist<1000?Math.round(dist)+' ม.':(dist/1000).toFixed(1)+' กม.';}
       }else throw new Error('No route data');
+      // เส้นใหม่พร้อม — ค่อยสลับ (ไม่กระพริบ)
+      var newGlow=L.polyline(coords,{color:'#ffb547',weight:12,opacity:0.25,lineJoin:'round',lineCap:'round'}).addTo(map);
+      var newLine=L.polyline(coords,{color:'#ea6500',weight:5,opacity:0.95,lineJoin:'round',lineCap:'round'}).addTo(map);
       if(routeGlow){try{map.removeLayer(routeGlow);}catch(e){}}
       if(routeLine){try{map.removeLayer(routeLine);}catch(e){}}
-      routeGlow=L.polyline(coords,{color:'#ffb547',weight:12,opacity:0.25,lineJoin:'round',lineCap:'round'}).addTo(map);
-      routeLine=L.polyline(coords,{color:'#ea6500',weight:5,opacity:0.95,lineJoin:'round',lineCap:'round'}).addTo(map);
-      toast('🛣️','เส้นทางพร้อม','วิ่งตามถนนจริง');
+      routeGlow=newGlow;routeLine=newLine;
+      routeFetching=false;
     })
     .catch(function(e){console.log('Server',idx,'failed:',e.message);tryServer(servers,idx+1);});
 }
