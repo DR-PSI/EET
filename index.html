@@ -373,13 +373,13 @@ function initMap(){
 
   var cgIcon=L.divIcon({
     className:'',
-    html:'<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ea6500,#ff8c2a);border:3px solid white;box-shadow:0 3px 16px rgba(234,101,0,0.6);display:flex;align-items:center;justify-content:center;font-size:20px;">⚡</div>',
-    iconSize:[48,48],iconAnchor:[24,24]
+    html:'<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#ea6500,#ff8c2a);border:2px solid white;box-shadow:0 2px 8px rgba(234,101,0,0.6);display:flex;align-items:center;justify-content:center;font-size:11px;">⚡</div>',
+    iconSize:[24,24],iconAnchor:[12,12]
   });
   var userIcon=L.divIcon({
     className:'',
-    html:'<div style="text-align:center;"><div style="width:40px;height:40px;border-radius:10px;background:white;border:2.5px solid #ea6500;box-shadow:0 4px 14px rgba(234,101,0,0.4);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto;">🏠</div><div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #ea6500;margin:0 auto;"></div></div>',
-    iconSize:[40,50],iconAnchor:[20,50]
+    html:'<div style="text-align:center;"><div style="width:20px;height:20px;border-radius:5px;background:white;border:2px solid #ea6500;box-shadow:0 2px 7px rgba(234,101,0,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;margin:0 auto;">🏠</div><div style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #ea6500;margin:0 auto;"></div></div>',
+    iconSize:[20,25],iconAnchor:[10,25]
   });
 
   cgMarker=L.marker([cLat,cLng],{icon:cgIcon}).addTo(map);
